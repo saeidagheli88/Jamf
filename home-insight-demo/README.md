@@ -6,6 +6,13 @@ that matters in one place — instead of juggling a dozen browser tabs.
 
 ## What it shows
 
+Two modes, switchable at the top:
+
+- **One home** — look up a single address and see its full report.
+- **Compare two** — put two homes side by side and see which one wins each
+  category (price, schools, errands, walkability, safety), with the stronger
+  value in every row highlighted.
+
 For each home, a single scannable report:
 
 - **Overall fit score** — a quick at-a-glance rating

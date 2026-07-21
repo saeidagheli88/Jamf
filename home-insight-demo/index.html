@@ -204,6 +204,57 @@
   .foot b{color:var(--ink-2)}
   .foot p{margin:0 0 8px} .foot p:last-child{margin:0}
 
+  /* ---------- mode toggle ---------- */
+  .modebar{display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap}
+  .seg{display:inline-flex; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:999px; padding:4px}
+  .seg button{border:none; background:none; font:inherit; cursor:pointer; color:var(--ink-2);
+    font-weight:600; font-size:.86rem; padding:8px 16px; border-radius:999px;
+    display:inline-flex; align-items:center; gap:7px; transition:color .15s ease}
+  .seg button svg{width:15px; height:15px}
+  .seg button[aria-selected="true"]{background:var(--surface); color:var(--ink); box-shadow:var(--shadow)}
+  .modebar .hint{font-size:.8rem; color:var(--ink-3)}
+
+  /* compare pickers */
+  .cpick{display:flex; gap:14px; flex-wrap:wrap}
+  .cpick label{flex:1 1 240px; display:flex; flex-direction:column; gap:7px;
+    font-size:.73rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase}
+  .cpick .la{color:var(--accent)} .cpick .lb{color:var(--amber)}
+  .cpick select{font:inherit; font-size:.95rem; color:var(--ink); background:var(--surface-2);
+    border:1px solid var(--line); border-radius:12px; padding:11px 14px; cursor:pointer}
+  .cpick .la + select{border-left:3px solid var(--accent)}
+  .cpick .lb + select{border-left:3px solid var(--amber)}
+  .cpick select:focus-visible{border-color:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent)}
+
+  /* compare output */
+  .csum{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px;
+    font-size:.92rem; color:var(--ink-2)}
+  .csum b{color:var(--ink)}
+  .tally{display:inline-flex; align-items:center; gap:7px; font-weight:600; font-size:.85rem;
+    padding:5px 11px; border-radius:999px}
+  .tally.a{color:var(--accent-ink); background:var(--accent-soft)}
+  .tally.b{color:var(--amber); background:var(--amber-soft)}
+  .ctable-wrap{background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+    box-shadow:var(--shadow); overflow-x:auto}
+  .ctable{display:grid; grid-template-columns:minmax(128px,1.1fr) 1fr 1fr; min-width:560px}
+  .ctable > div{padding:13px 16px; border-bottom:1px solid var(--line); display:flex; align-items:center}
+  .ctable .chead{padding:18px 16px; align-items:flex-start; flex-direction:column; gap:3px;
+    background:var(--surface-2); border-bottom:2px solid var(--line-2)}
+  .ctable .chead.a{box-shadow:inset 3px 0 0 var(--accent)}
+  .ctable .chead.b{box-shadow:inset 3px 0 0 var(--amber)}
+  .chead .h-addr{font-family:var(--serif); font-size:1.02rem; line-height:1.15}
+  .chead .h-city{font-size:.78rem; color:var(--ink-3)}
+  .chead .h-price{font-weight:700; font-variant-numeric:tabular-nums; margin-top:4px}
+  .ctable .mlabel{color:var(--ink-2); font-size:.85rem}
+  .ctable .mval{font-weight:600; font-variant-numeric:tabular-nums; justify-content:space-between; gap:8px}
+  .ctable .mval .wk{display:inline-flex; align-items:center; gap:6px}
+  .ctable .win{background:color-mix(in srgb, var(--accent) 9%, transparent)}
+  .ctable .win .badge{color:var(--accent); display:inline-flex}
+  .ctable .win .badge svg{width:15px; height:15px}
+  .ctable .badge{display:none}
+  .ctable > div:nth-last-child(-n+3){border-bottom:none}
+
   .anim-swap{animation:swap .45s cubic-bezier(.22,1,.36,1)}
   @keyframes swap{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
   @media (prefers-reduced-motion: reduce){
@@ -229,15 +280,37 @@
     </header>
 
     <section class="search-card">
-      <label class="search-field">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        <input id="q" type="text" placeholder="Search an address…  (try “Seattle” or “Naperville”)" autocomplete="off" aria-label="Search a home address">
-      </label>
-      <div class="chips" id="chips" role="group" aria-label="Sample homes"></div>
-      <p class="no-match" id="noMatch">No sample home matches that — try one of the buttons above. (The live product would search real listings.)</p>
+      <div class="modebar" role="tablist" aria-label="View mode">
+        <div class="seg">
+          <button id="tabSingle" role="tab" aria-selected="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg>
+            One home
+          </button>
+          <button id="tabCompare" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/></svg>
+            Compare two
+          </button>
+        </div>
+        <span class="hint" id="modeHint">Look up a single home’s full report.</span>
+      </div>
+
+      <div id="singleControls">
+        <label class="search-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="q" type="text" placeholder="Search an address…  (try “Seattle” or “Naperville”)" autocomplete="off" aria-label="Search a home address">
+        </label>
+        <div class="chips" id="chips" role="group" aria-label="Sample homes"></div>
+        <p class="no-match" id="noMatch">No sample home matches that — try one of the buttons above. (The live product would search real listings.)</p>
+      </div>
+
+      <div id="compareControls" class="cpick" hidden>
+        <label><span class="la">Home A</span><select id="selA"></select></label>
+        <label><span class="lb">Home B</span><select id="selB"></select></label>
+      </div>
     </section>
 
     <main class="report" id="report" aria-live="polite"></main>
+    <div id="compareOut" aria-live="polite" hidden></div>
 
     <footer class="foot">
       <p><b>This is a working demo built on sample data</b> — the three homes above are made up to show the experience. The real product would pull live prices, schools, and map data from licensed sources.</p>
@@ -505,6 +578,104 @@
   q.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); search(q.value); } });
   q.addEventListener("input", function(){ if(q.value.trim()==="") noMatch.style.display="none"; });
 
+  // ---------- compare view ----------
+  var selA = document.getElementById("selA"), selB = document.getElementById("selB");
+  function fillSelect(sel, chosen){
+    sel.innerHTML = homes.map(function(h){
+      return '<option value="'+h.id+'"'+(h.id===chosen?' selected':'')+'>'
+        + h.addr.replace(/·.*/,"").trim()+' — '+h.label+'</option>';
+    }).join("");
+  }
+  var check = '<span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>';
+
+  function topSchool(h){ return Math.max.apply(null, h.schools.map(function(s){return s.r;})); }
+  function costcoDist(h){
+    var c = h.errands.filter(function(e){return e.k==="costco";})[0];
+    return c ? c.d : null;
+  }
+
+  function renderCompare(){
+    var a = homes.filter(function(x){return x.id===selA.value;})[0];
+    var b = homes.filter(function(x){return x.id===selB.value;})[0];
+    if(!a || !b) return;
+
+    // metric: better = 'low' | 'high'; fmt(value)
+    var rows = [
+      {label:"List price", a:a.price, b:b.price, better:"low", fmt:usd},
+      {label:"Price / sq ft", a:a.ppsf, b:b.ppsf, better:"low", fmt:function(v){return "$"+v;}},
+      {label:"vs. area median", a:a.overPct, b:b.overPct, better:"low",
+        fmt:function(v){return v>0?"+"+v+"%":v+"%";}},
+      {label:"Overall fit score", a:a.fit, b:b.fit, better:"high", fmt:function(v){return v+"/100";}},
+      {label:"Interior size", a:a.sqft, b:b.sqft, better:"high", fmt:function(v){return v.toLocaleString()+" sq ft";}},
+      {label:"Bedrooms", a:a.beds, b:b.beds, better:"high", fmt:function(v){return v;}},
+      {label:"Bathrooms", a:a.baths, b:b.baths, better:"high", fmt:function(v){return v;}},
+      {label:"Top school rating", a:topSchool(a), b:topSchool(b), better:"high", fmt:function(v){return v+"/10";}},
+      {label:"Nearest Costco", a:costcoDist(a), b:costcoDist(b), better:"low", fmt:function(v){return v+" mi";}},
+      {label:"Walk score", a:a.walk, b:b.walk, better:"high", fmt:function(v){return v;}},
+      {label:"Transit score", a:a.transit, b:b.transit, better:"high", fmt:function(v){return v;}},
+      {label:"Safety score", a:a.safety.score, b:b.safety.score, better:"high", fmt:function(v){return v+"/100";}}
+    ];
+
+    var winA=0, winB=0, body="";
+    rows.forEach(function(r){
+      var w = "tie";
+      if(r.a!==r.b) w = r.better==="low" ? (r.a<r.b?"a":"b") : (r.a>r.b?"a":"b");
+      if(w==="a") winA++; else if(w==="b") winB++;
+      body += '<div class="mlabel">'+r.label+'</div>'
+        + '<div class="mval'+(w==="a"?" win":"")+'"><span class="wk">'+r.fmt(r.a)+'</span>'+(w==="a"?check:"")+'</div>'
+        + '<div class="mval'+(w==="b"?" win":"")+'"><span class="wk">'+r.fmt(r.b)+'</span>'+(w==="b"?check:"")+'</div>';
+    });
+
+    function headCell(h, cls){
+      return '<div class="chead '+cls+'"><span class="h-addr">'+h.addr.replace(/·.*/,"").trim()+'</span>'
+        + '<span class="h-city">'+h.city+'</span><span class="h-price">'+usd(h.price)+'</span></div>';
+    }
+
+    var lead = winA>winB ? '<span class="tally a">'+check.replace(/badge/,"")+'Home A leads · '+winA+'</span>'
+             : winB>winA ? '<span class="tally b">'+check.replace(/badge/,"")+'Home B leads · '+winB+'</span>'
+             : '<span class="tally a">Evenly matched</span>';
+
+    document.getElementById("compareOut").innerHTML =
+      '<div class="csum anim-swap">'+lead
+      + '<span>Each highlighted cell marks the stronger home for that row — “better” means lower price/distance or a higher score.</span></div>'
+      + '<div class="ctable-wrap"><div class="ctable">'
+        + '<div class="chead"></div>'+headCell(a,"a")+headCell(b,"b")
+        + body
+      + '</div></div>';
+  }
+  selA.addEventListener("change", function(){
+    if(selA.value===selB.value){ // avoid comparing a home to itself
+      var other = homes.filter(function(h){return h.id!==selA.value;})[0];
+      if(other) selB.value = other.id;
+    }
+    renderCompare();
+  });
+  selB.addEventListener("change", function(){
+    if(selB.value===selA.value){
+      var other = homes.filter(function(h){return h.id!==selB.value;})[0];
+      if(other) selA.value = other.id;
+    }
+    renderCompare();
+  });
+
+  // ---------- mode toggle ----------
+  var tabSingle = document.getElementById("tabSingle"), tabCompare = document.getElementById("tabCompare");
+  var singleControls = document.getElementById("singleControls"), compareControls = document.getElementById("compareControls");
+  var reportEl = document.getElementById("report"), compareOut = document.getElementById("compareOut"), modeHint = document.getElementById("modeHint");
+  function setMode(compare){
+    tabSingle.setAttribute("aria-selected", String(!compare));
+    tabCompare.setAttribute("aria-selected", String(compare));
+    singleControls.hidden = compare; reportEl.hidden = compare;
+    compareControls.hidden = !compare; compareOut.hidden = !compare;
+    modeHint.textContent = compare ? "Put two homes side by side and see which wins each category."
+                                   : "Look up a single home’s full report.";
+    if(compare) renderCompare();
+  }
+  tabSingle.addEventListener("click", function(){ setMode(false); });
+  tabCompare.addEventListener("click", function(){ setMode(true); });
+
+  fillSelect(selA, homes[0].id);
+  fillSelect(selB, homes[2].id);
   buildChips();
   select(current);
 })();
