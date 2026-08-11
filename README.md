@@ -49,5 +49,6 @@ Community-sourced templates — fill in placeholders and test before deploying.
 
 ## 👤 Author
 
-Saeid Agheli — Intune & Jamf Administrator
-https://github.com/saeidagheli88
+**Saeid Agheli** — Intune & Jamf Administrator
+
+🌐 [www.saeidagheli.com](https://www.saeidagheli.com) · [GitHub](https://github.com/saeidagheli88)
