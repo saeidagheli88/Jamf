@@ -4,6 +4,7 @@
 ![Shell](https://img.shields.io/badge/shell-zsh%20%7C%20bash-4EAA25?logo=gnubash&logoColor=white)
 ![Jamf Pro](https://img.shields.io/badge/Jamf-Pro-9BD3DD)
 ![License](https://img.shields.io/badge/license-MIT-2ea44f)
+![Last Commit](https://img.shields.io/github/last-commit/saeidagheli88/Jamf?color=8A2BE2)
 
 A collection of production-ready scripts and Extension Attributes for managing macOS devices with **Jamf Pro**. Each package lives in its own folder with full documentation and setup instructions; two community libraries provide ready-to-adapt templates.
 
